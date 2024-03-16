@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="690dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-317dp"
+        android:layout_marginBottom="-280dp"
         android:background="@color/white" />
 
     <Button
@@ -31,7 +31,7 @@
         android:textSize="35sp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-       />
+        />
     <Button
         android:id="@+id/blueTruthButton"
         android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/BluePageNum"
-       android:layout_alignParentRight="true"
+        android:layout_alignParentRight="true"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
         android:text="Dare"
@@ -103,6 +103,18 @@
         android:text="Dare"
         android:textColor="@color/black"
         android:visibility="gone" />
+<TextView
+    android:id="@+id/Box"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:textColor="@color/black"
+    android:textSize="20sp"
+    android:layout_centerVertical="true"
+    android:textAlignment="center"
+    />
+
+
 
 
 </RelativeLayout>
