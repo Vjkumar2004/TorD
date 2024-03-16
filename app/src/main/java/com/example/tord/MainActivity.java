@@ -3,25 +3,26 @@ package com.example.tord;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Random;
 import androidx.appcompat.app.AlertDialog;
 import android.graphics.Color;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
-
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     TextView box;
@@ -59,37 +60,39 @@ public class MainActivity extends AppCompatActivity {
         redtruthbutton.setVisibility(View.GONE);
         reddarebutton.setVisibility(View.GONE);
 
-        url = "https://tord-server.onrender.com/truth";
+        String urllink = "https://tord-server.onrender.com/truth";
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String status = response.getString("status");
-                    if (status.equals("ok")) {
-                        String truth = response.getString("truth");
-                        ShowDialog(truth);
-                    } else {
-                        ShowDialog("Error fetching truth message");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    ShowDialog("Error parsing JSON");
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Handle Volley errors here
-                String errorMessage;
-                if (error.networkResponse != null) {
-                    errorMessage = "Error: " + error.networkResponse.statusCode;
-                } else {
-                    errorMessage = "Error fetching data. Please check your internet connection.";
-                }
-                ShowDialog(errorMessage);
-            }
-        });
+        // JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        //     @Override
+        //     public void onResponse(JSONObject response) {
+        //         try {
+        //             String status = response.getString("status");
+        //             if (status.equals("ok")) {
+        //                 String truth = response.getString("truth");
+        //                 ShowDialog(truth);
+        //             } else {
+        //                 ShowDialog("Error fetching truth message");
+        //             }
+        //         } catch (JSONException e) {
+        //             e.printStackTrace();
+        //             ShowDialog("Error parsing JSON");
+        //         }
+        //     }
+        // }, new Response.ErrorListener() {
+        //     @Override
+        //     public void onErrorResponse(VolleyError error) {
+        //         // Handle Volley errors here
+        //         String errorMessage;
+        //         if (error.networkResponse != null) {
+        //             errorMessage = "Error: " + error.networkResponse.statusCode;
+        //         } else {
+        //             errorMessage = "Error fetching data. Please check your internet connection.";
+        //         }
+        //         ShowDialog(errorMessage);
+        //     }
+        // });
+        
+
 
         StartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,18 +104,19 @@ public class MainActivity extends AppCompatActivity {
                 generateRandomNumber();
             }
         });
-
+  
         bluetruthbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Volley.newRequestQueue(MainActivity.this).add(jsonObjectRequest);
+                // Volley.newRequestQueue(MainActivity.this).add(jsonObjectRequest);
+                ShowDialog();
             }
         });
 
         redtruthbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Volley.newRequestQueue(MainActivity.this).add(jsonObjectRequest);
+//                Volley.newRequestQueue(MainActivity.this).add(jsonObjectRequest);
             }
         });
     }
@@ -176,10 +180,10 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
     }
-    private void ShowDialog(String message){
-
+    public void ShowDialog(){
+        String x = new MyTask().execute().toString();
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setMessage(message)
+                .setMessage(x)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -189,5 +193,31 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+}
+
+class MyTask extends AsyncTask<String,String,String>{
+
+    @Override
+    protected String doInBackground(String... strings) {
+        StringBuilder responseString = new StringBuilder();
+        try {
+            URL url = new URL("https://tord-server.onrender.com/truth");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream in = new BufferedInputStream(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String line;
+                while ((line = reader.readLine())!= null){
+                    responseString.append(line).append("\n");
+                }
+                reader.close();
+            }
+
+
+        } catch (Exception e) {
+
+        }
+        return responseString.toString();
     }
 }
