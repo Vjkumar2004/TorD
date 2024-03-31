@@ -22,7 +22,7 @@ import java.util.Random;
 import androidx.appcompat.app.AlertDialog;
 import android.graphics.Color;
 
-import org.json.simple.JSONObject
+import org.json.*;
 
 public class MainActivity extends AppCompatActivity {
     TextView box;
@@ -215,9 +215,11 @@ class GetTruthTask extends AsyncTask<String,String,String>{
 
     @Override
     protected void onPostExecutes(String result){
-        JSONParser parser = new JSONParser();
-        JSONObject json = (JSONObject) parser.parse(result);
-
+//        JSONParser parser = new JSONParser();
+        try {
+            JSONObject json = new JSONObject(result);
+        }
+        catch (Exception e){}
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
         .setMessage(json.get("truth"))
         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
