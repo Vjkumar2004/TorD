@@ -214,22 +214,25 @@ class GetTruthTask extends AsyncTask<String,String,String>{
     }
 
     @Override
-    protected void onPostExecutes(String result){
-//        JSONParser parser = new JSONParser();
-        try {
-            JSONObject json = new JSONObject(result);
-        }
-        catch (Exception e){}
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-        .setMessage(json.get("truth"))
-        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+protected void onPostExecute(String result) {
+    try {
+        JSONObject json = new JSONObject(result);
 
-            }
-        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                .setMessage(json.getString("truth"))
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Handle button click if needed
+                    }
+                });
 
-AlertDialog alertDialog = builder.create();
-alertDialog.show();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    } catch (JSONException e) {
+        e.printStackTrace();
+        // Handle JSON parsing error
     }
+}
+
 }
