@@ -22,7 +22,7 @@ import java.util.Random;
 import androidx.appcompat.app.AlertDialog;
 import android.graphics.Color;
 
-
+import org.json.simple.JSONObject
 
 public class MainActivity extends AppCompatActivity {
     TextView box;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         redtruthbutton.setVisibility(View.GONE);
         reddarebutton.setVisibility(View.GONE);
 
-        String urllink = "https://tord-server.onrender.com/truth";
+        // String urllink = "https://tord-server.onrender.com/truth";
 
         // JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
         //     @Override
@@ -181,25 +181,17 @@ public class MainActivity extends AppCompatActivity {
         handler.removeCallbacksAndMessages(null);
     }
     public void ShowDialog(){
-        String x = new MyTask().execute().toString();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setMessage(x)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        new GetTruthTask().execute();
+        
     }
 }
 
-class MyTask extends AsyncTask<String,String,String>{
+class GetTruthTask extends AsyncTask<String,String,String>{
+    
 
     @Override
     protected String doInBackground(String... strings) {
+        
         StringBuilder responseString = new StringBuilder();
         try {
             URL url = new URL("https://tord-server.onrender.com/truth");
@@ -219,5 +211,23 @@ class MyTask extends AsyncTask<String,String,String>{
 
         }
         return responseString.toString();
+    }
+
+    @Override
+    protected void onPostExecutes(String result){
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(result);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        .setMessage(json.get("truth"))
+        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+AlertDialog alertDialog = builder.create();
+alertDialog.show();
     }
 }
